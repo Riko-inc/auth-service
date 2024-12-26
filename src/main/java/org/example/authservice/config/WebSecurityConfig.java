@@ -32,6 +32,7 @@ public class WebSecurityConfig {
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",
+            "/actuator/**",
             "/swagger-resources",
             "/swagger-resources/**",
             "/configuration/ui",
