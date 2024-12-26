@@ -8,6 +8,12 @@ services:
     depends_on:
       - postgres
       - redis
+    healthcheck:
+      test: "curl --fail --silent localhost:8083/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
 
   postgres:
     image: 'postgres:latest'
