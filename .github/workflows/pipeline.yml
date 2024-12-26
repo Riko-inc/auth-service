@@ -51,6 +51,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          while ! pg_isready -h postgres -U myuser; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 2
+          done
+
       - name: Run Tests
         run: mvn test
 

@@ -22,9 +22,9 @@ services:
       - 'POSTGRES_PASSWORD=secret'
       - 'POSTGRES_USER=myuser'
     ports:
-      - '5425:5432'
+      - '5432:5432'
     expose:
-      - '5425'
+      - '5432'
 
   redis:
     image: 'redis:latest'
