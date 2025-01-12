@@ -46,6 +46,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.checkToken(token));
     }
 
+    @Operation(summary = "Проверить, что пользователь с заданным email существует")
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> validateEmail(@RequestHeader("Email") String email) {
+        return ResponseEntity.ok(service.checkEmailExists(email));
+    }
+
     @Operation(summary = "Получить email из токена пользователя")
     @GetMapping("/extract-email")
     public ResponseEntity<String> extractEmail(@RequestHeader("Email") String token) {

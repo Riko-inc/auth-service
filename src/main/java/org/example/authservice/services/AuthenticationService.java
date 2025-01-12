@@ -44,6 +44,7 @@ public class AuthenticationService {
 
     @EventListener(ApplicationReadyEvent.class)
     public void adminCreator() {
+        userService.deleteByEmail("a@admin.com");
         UserEntity user = userService.create(UserEntity.builder()
                 .role(UserEntity.Role.ADMIN)
                 .email("a@admin.com")
@@ -155,6 +156,10 @@ public class AuthenticationService {
 
     public String extractEmail(String token) {
         return jwtService.extractEmail(token);
+    }
+
+    public Boolean checkEmailExists(String email) {
+        return userService.getByEmail(email) != null;
     }
 
 }

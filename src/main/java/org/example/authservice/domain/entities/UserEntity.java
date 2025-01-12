@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "users")
+@Table(schema = "auth_service", name = "users")
 public class UserEntity implements UserDetails {
     public enum Role {ADMIN, USER}
     @Id
