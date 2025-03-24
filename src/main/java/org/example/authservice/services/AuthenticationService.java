@@ -7,6 +7,7 @@ import org.example.authservice.domain.dto.requests.UserAccessTokenRequest;
 import org.example.authservice.domain.dto.requests.UserRefreshTokenRequest;
 import org.example.authservice.domain.dto.requests.UserSignInRequest;
 import org.example.authservice.domain.dto.requests.UserSignUpRequest;
+import org.example.authservice.domain.dto.responses.UserDetailResponse;
 import org.example.authservice.domain.dto.responses.UserJwtAuthenticationResponse;
 import org.example.authservice.domain.entities.TokenRedisEntity;
 import org.example.authservice.domain.entities.UserEntity;
@@ -18,10 +19,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.StyledEditorKit;
+import java.util.List;
 
 /**
  * Contains logic for getting JWT tokens
@@ -162,4 +165,16 @@ public class AuthenticationService {
         return userService.getByEmail(email) != null;
     }
 
+    public UserDetailResponse getUserDetails(UserEntity user) {
+        return UserDetailResponse.builder()
+                .username(user.getUsername())
+                .userId(user.getUserId())
+                .password(user.getPassword())
+                .isAccountNonLocked(user.isAccountNonLocked())
+                .isEnabled(user.isEnabled())
+                .isCredentialsNonExpired(user.isCredentialsNonExpired())
+                .isAccountNonExpired(user.isAccountNonExpired())
+                .authorities(user.getRole())
+                .build();
+    }
 }

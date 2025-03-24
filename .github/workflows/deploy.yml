@@ -1,0 +1,50 @@
+name: Deploy Task Service
+
+on:
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t riko-inc/auth-service:latest .
+
+      - name: Save Docker image to archive
+        run: |
+          docker save riko-inc/auth-service:latest -o $GITHUB_WORKSPACE/image.tar && echo "Docker image saved successfully"
+
+      - name: Fix file permissions
+        run: chmod 644 $GITHUB_WORKSPACE/image.tar
+
+      - name: Transfer image to server via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "/github/workspace/image.tar"
+          target: "/tmp/"
+          strip_components: 0
+          debug: true
+
+      - name: Deploy on server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            chmod 644 /tmp/github/workspace/image.tar
+            sudo ctr images import /tmp/github/workspace/image.tar --base-name riko-inc/auth-service --debug
+            helm upgrade --install auth-service /home/user1/auth-service --namespace services --set image.tag=latest --set image.repository=riko-inc/auth-service
+          debug: true

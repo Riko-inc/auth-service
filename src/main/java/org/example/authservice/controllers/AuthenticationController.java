@@ -1,16 +1,19 @@
 package org.example.authservice.controllers;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.example.authservice.domain.dto.requests.UserAccessTokenRequest;
 import org.example.authservice.domain.dto.requests.UserRefreshTokenRequest;
 import org.example.authservice.domain.dto.requests.UserSignInRequest;
 import org.example.authservice.domain.dto.requests.UserSignUpRequest;
+import org.example.authservice.domain.dto.responses.UserDetailResponse;
 import org.example.authservice.domain.dto.responses.UserJwtAuthenticationResponse;
+import org.example.authservice.domain.entities.UserEntity;
 import org.example.authservice.services.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,15 +55,24 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.checkEmailExists(email));
     }
 
-    @Operation(summary = "Получить email из токена пользователя")
+    @Operation(summary = "Получить email текущего пользователя")
+    @SecurityRequirement(name = "JWT")
     @GetMapping("/extract-email")
-    public ResponseEntity<String> extractEmail(@RequestHeader("Email") String token) {
-        return ResponseEntity.ok(service.extractEmail(token));
+    public ResponseEntity<String> extractEmail(@AuthenticationPrincipal UserEntity user) {
+        return ResponseEntity.ok(user.getEmail());
     }
 
-    @Operation(summary = "Получить роль пользователя из его токена")
-    @PostMapping("/role")
-    public ResponseEntity<String> getRole(@RequestBody @Validated UserAccessTokenRequest request) {
-        return ResponseEntity.ok(service.getRoleByToken(request.getAccessToken()));
+    @Operation(summary = "Получить роль текущего пользователя")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/role")
+    public ResponseEntity<String> getRole(@AuthenticationPrincipal UserEntity user) {
+        return ResponseEntity.ok(user.getRole().toString());
+    }
+
+    @Operation(summary = "Получить UserDetails из токена пользователя")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/details")
+    public ResponseEntity<UserDetailResponse> getUserDetails(@AuthenticationPrincipal UserEntity user) {
+        return ResponseEntity.ok(service.getUserDetails(user));
     }
 }
