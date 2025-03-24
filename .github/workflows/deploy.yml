@@ -46,5 +46,5 @@ jobs:
             export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
             chmod 644 /tmp/github/workspace/image.tar
             sudo ctr images import /tmp/github/workspace/image.tar --base-name riko-inc/auth-service --debug
-            helm upgrade --install auth-service /home/user1/auth-service --namespace services --set image.tag=$GITHUB_SHA --set image.repository=riko-inc/auth-service --set annotations.sha=$GITHUB_SHA
+            helm upgrade --install auth-service /home/user1/auth-service --namespace services --set image.tag=$GITHUB_SHA --set image.repository=riko-inc/auth-service --set annotations.sha=$GITHUB_SHA --atomic --wait
           debug: true
