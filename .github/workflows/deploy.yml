@@ -14,11 +14,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t riko-inc/auth-service:$GITHUB_SHA .
+          docker build -t riko-inc/auth-service:latest .
 
       - name: Save Docker image to archive
         run: |
-          docker save riko-inc/auth-service:$GITHUB_SHA -o $GITHUB_WORKSPACE/image.tar && echo "Docker image saved successfully"
+          docker save riko-inc/auth-service:latest -o $GITHUB_WORKSPACE/image.tar && echo "Docker image saved successfully"
 
       - name: Fix file permissions
         run: chmod 644 $GITHUB_WORKSPACE/image.tar
@@ -46,5 +46,5 @@ jobs:
             export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
             chmod 644 /tmp/github/workspace/image.tar
             sudo ctr images import /tmp/github/workspace/image.tar --base-name riko-inc/auth-service --debug
-            helm upgrade --install auth-service /home/user1/auth-service --namespace services --set image.tag=$GITHUB_SHA --set image.repository=riko-inc/auth-service --set annotations.sha=$GITHUB_SHA --atomic
+            helm upgrade --install auth-service /home/user1/auth-service --namespace services --set image.tag=latest --set image.repository=riko-inc/auth-service --wait
           debug: true
