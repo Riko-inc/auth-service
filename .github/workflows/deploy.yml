@@ -14,11 +14,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t riko-inc/auth-service::$GITHUB_SHA .
+          docker build -t riko-inc/auth-service:$GITHUB_SHA .
 
       - name: Save Docker image to archive
         run: |
-          docker save riko-inc/auth-service::$GITHUB_SHA -o $GITHUB_WORKSPACE/image.tar && echo "Docker image saved successfully"
+          docker save riko-inc/auth-service:$GITHUB_SHA -o $GITHUB_WORKSPACE/image.tar && echo "Docker image saved successfully"
 
       - name: Fix file permissions
         run: chmod 644 $GITHUB_WORKSPACE/image.tar
