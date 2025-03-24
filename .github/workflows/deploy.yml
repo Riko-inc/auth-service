@@ -1,4 +1,4 @@
-name: Deploy Task Service
+name: Deploy Auth Service
 
 on:
   push:
