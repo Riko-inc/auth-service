@@ -8,7 +8,8 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 
 @OpenAPIDefinition (
-        servers = {@Server(url = "31064:/auth/", description = "Default server url"), @Server(url = "/", description = "localhost")},
+        servers = {
+                @Server(url = "http://localhost:${server.port}${SWAGGER_PREFIX:}", description = "Server")},
         info = @Info(
         title = "Authentication module of task management platform",
         description = "Made as research project at TPU", version = "1.0.0",
