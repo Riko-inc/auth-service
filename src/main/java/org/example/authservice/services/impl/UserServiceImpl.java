@@ -5,15 +5,15 @@ import org.example.authservice.domain.dto.requests.UserUpdateRequest;
 import org.example.authservice.domain.dto.responses.UserGetCurrentUserResponse;
 import org.example.authservice.domain.dto.responses.UserUpdateResponse;
 import org.example.authservice.domain.entities.UserEntity;
+import org.example.authservice.exceptions.AccessDeniedException;
 import org.example.authservice.exceptions.EntityNotFoundException;
+import org.example.authservice.exceptions.InvalidRequestParameterException;
 import org.example.authservice.repositories.UserRepository;
 import org.example.authservice.services.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
+import org.example.authservice.exceptions.UserAlreadyExistException;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +30,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserEntity create(UserEntity userEntity) {
         if (userRepository.existsByEmail(userEntity.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with " + userEntity.getEmail() + " email already exists");
+            throw new UserAlreadyExistException("User with " + userEntity.getEmail() + " email already exists");
         }
         return userRepository.save(userEntity);
     }
-
 
     @Override
     @Transactional
@@ -75,16 +74,31 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteByEmail(String email){
+        if (email == null || email.isEmpty()) {
+            throw new InvalidRequestParameterException("Email was not provided");
+        }
         userRepository.deleteUserEntityByEmail(email);
     }
 
     @Override
     @Transactional
     public UserGetCurrentUserResponse getCurrentUser(UserEntity user) {
+        if (user == null) {
+            throw new AccessDeniedException("User was not logged in");
+        }
         return UserGetCurrentUserResponse.builder()
                 .id(user.getUserId())
                 .role(user.getRole())
                 .email(user.getEmail())
                 .registrationDateTime(user.getRegistrationDateTime()).build();
+    }
+
+    @Override
+    @Transactional
+    public boolean existsByEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new InvalidRequestParameterException("Email was not provided");
+        }
+        return userRepository.existsByEmail(email);
     }
 }

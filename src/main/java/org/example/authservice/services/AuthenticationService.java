@@ -11,6 +11,7 @@ import org.example.authservice.domain.dto.responses.UserJwtAuthenticationRespons
 import org.example.authservice.domain.entities.TokenRedisEntity;
 import org.example.authservice.domain.entities.UserEntity;
 import org.example.authservice.exceptions.AccessDeniedException;
+import org.example.authservice.exceptions.UserAlreadyExistException;
 import org.example.authservice.repositories.TokenRepository;
 import org.example.authservice.security.JwtService;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,6 +71,10 @@ public class AuthenticationService {
      * @throws ValidationException При несоответствии правилам полей
      */
     public UserJwtAuthenticationResponse register(UserSignUpRequest request) {
+        if (userService.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistException("Пользователь с указанной почтой " + request.getEmail() + " уже зарегистрирован");
+        }
+
         UserEntity user = userService.create(UserEntity.builder()
                 .email(request.getEmail().strip())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -86,10 +91,10 @@ public class AuthenticationService {
      * @see UserJwtAuthenticationResponse
      */
     public UserJwtAuthenticationResponse authenticate(UserSignInRequest request) {
+        UserEntity user = userService.getByEmail(request.getEmail());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()));
-        UserEntity user = userService.getByEmail(request.getEmail());
         return generateTokenResponse(user);
     }
 
@@ -103,6 +108,10 @@ public class AuthenticationService {
     public UserJwtAuthenticationResponse refreshToken(UserRefreshTokenRequest request) {
         String oldRefreshToken = request.getRefreshToken();
 
+        if (oldRefreshToken == null || oldRefreshToken.isBlank()) {
+            throw new AccessDeniedException("Provided refresh token is empty");
+        }
+
         TokenRedisEntity token = tokenRepository.getByToken(oldRefreshToken)
                 .orElseThrow(() -> new AccessDeniedException("Token is invalid or expired"));
 
@@ -111,7 +120,8 @@ public class AuthenticationService {
         }
 
         String email = jwtService.extractEmail(oldRefreshToken);
-        if (email == null) {
+
+        if (email == null || email.isBlank()) {
             throw new AccessDeniedException("Provided refresh token is invalid");
         }
 
@@ -132,35 +142,28 @@ public class AuthenticationService {
                 .build();
     }
 
-    public Boolean checkToken(String token) {
-
-        System.out.println("Checking token from CheckToken!!!: " + token);
-        try {
-            String tokenType = jwtService.extractTokenType(token);
-
-            if (StringUtils.isEmpty(tokenType) || tokenType.equals("REFRESH")) {
-                return false;
-            }
-            System.out.println("result: " + tokenRepository.getByToken(token).isPresent());
-            return tokenRepository.getByToken(token).isPresent();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public String getRoleByToken(String token) {
-        return jwtService.extractRole(token);
-    }
-
-    public String extractEmail(String token) {
-        return jwtService.extractEmail(token);
-    }
-
     public Boolean checkEmailExists(String email) {
-        return userService.getByEmail(email) != null;
+        return userService.existsByEmail(email);
+    }
+
+    public String extractEmail(UserEntity user) {
+        if (user == null) {
+            throw new AccessDeniedException("Provided user is null");
+        }
+        return user.getEmail();
+    }
+
+    public String extractRole(UserEntity user) {
+        if (user == null) {
+            throw new AccessDeniedException("Provided user is null");
+        }
+        return user.getRole().toString();
     }
 
     public UserDetailResponse getUserDetails(UserEntity user) {
+        if (user == null) {
+            throw new AccessDeniedException("Provided user is null");
+        }
         return UserDetailResponse.builder()
                 .username(user.getUsername())
                 .userId(user.getUserId())
