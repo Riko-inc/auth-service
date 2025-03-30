@@ -3,7 +3,6 @@ package org.example.authservice.services;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.example.authservice.domain.dto.requests.UserAccessTokenRequest;
 import org.example.authservice.domain.dto.requests.UserRefreshTokenRequest;
 import org.example.authservice.domain.dto.requests.UserSignInRequest;
 import org.example.authservice.domain.dto.requests.UserSignUpRequest;
@@ -19,12 +18,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.StyledEditorKit;
-import java.util.List;
 
 /**
  * Contains logic for getting JWT tokens
