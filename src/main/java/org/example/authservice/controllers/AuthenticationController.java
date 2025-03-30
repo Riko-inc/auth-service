@@ -3,6 +3,7 @@ package org.example.authservice.controllers;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.authservice.domain.dto.requests.UserRefreshTokenRequest;
 import org.example.authservice.domain.dto.requests.UserSignInRequest;
@@ -27,52 +28,46 @@ public class AuthenticationController {
 
     @Operation(summary = "Зарегистрировать пользователя и получить JWT токены")
     @PostMapping("/register")
-    public ResponseEntity<UserJwtAuthenticationResponse> register(@RequestBody @Validated UserSignUpRequest request) {
+    public ResponseEntity<UserJwtAuthenticationResponse> register(@RequestBody @Valid UserSignUpRequest request) {
         return new ResponseEntity<>(service.register(request), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Аутентифицировать зарегистрированного пользователя и получить JWT токены")
     @PostMapping("/authenticate")
-    public ResponseEntity<UserJwtAuthenticationResponse> authenticate(@RequestBody @Validated UserSignInRequest request) {
+    public ResponseEntity<UserJwtAuthenticationResponse> authenticate(@RequestBody @Valid UserSignInRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
     @Operation(summary = "Выпустить новую пару токенов с помощью refresh токена")
     @PostMapping("/refresh-token")
-    public ResponseEntity<UserJwtAuthenticationResponse> refreshToken(@RequestBody @Validated UserRefreshTokenRequest request) {
+    public ResponseEntity<UserJwtAuthenticationResponse> refreshToken(@RequestBody @Valid UserRefreshTokenRequest request) {
         return ResponseEntity.ok(service.refreshToken(request));
-    }
-
-    @Operation(summary = "Проверить JWT access токен на валидность")
-    @GetMapping("/check-token")
-    public ResponseEntity<Boolean> checkToken(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(service.checkToken(token));
     }
 
     @Operation(summary = "Проверить, что пользователь с заданным email существует")
     @GetMapping("/check-email")
-    public ResponseEntity<Boolean> validateEmail(@RequestHeader("Email") String email) {
+    public ResponseEntity<Boolean> validateEmail(@Valid @RequestHeader("Email") String email) {
         return ResponseEntity.ok(service.checkEmailExists(email));
     }
 
     @Operation(summary = "Получить email текущего пользователя")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/extract-email")
-    public ResponseEntity<String> extractEmail(@AuthenticationPrincipal UserEntity user) {
-        return ResponseEntity.ok(user.getEmail());
+    public ResponseEntity<String> extractEmail(@Valid @AuthenticationPrincipal UserEntity user) {
+        return ResponseEntity.ok(service.extractEmail(user));
     }
 
     @Operation(summary = "Получить роль текущего пользователя")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/role")
-    public ResponseEntity<String> getRole(@AuthenticationPrincipal UserEntity user) {
-        return ResponseEntity.ok(user.getRole().toString());
+    public ResponseEntity<String> getRole(@Valid @AuthenticationPrincipal UserEntity user) {
+        return ResponseEntity.ok(service.extractRole(user));
     }
 
     @Operation(summary = "Получить UserDetails из токена пользователя")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/details")
-    public ResponseEntity<UserDetailResponse> getUserDetails(@AuthenticationPrincipal UserEntity user) {
+    public ResponseEntity<UserDetailResponse> getUserDetails(@Valid @AuthenticationPrincipal UserEntity user) {
         return ResponseEntity.ok(service.getUserDetails(user));
     }
 }

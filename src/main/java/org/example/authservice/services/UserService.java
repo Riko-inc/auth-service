@@ -71,4 +71,6 @@ public interface UserService {
      * @return {@link UserEntity}
      */
     UserEntity getByEmail(String email);
+
+    boolean existsByEmail(String email);
 }
