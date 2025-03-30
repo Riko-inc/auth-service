@@ -50,6 +50,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.checkEmailExists(email));
     }
 
+    @Operation(summary = "Проверить JWT access токен на валидность")
+    @GetMapping("/check-token")
+    public ResponseEntity<Boolean> checkToken(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(service.checkToken(token));
+    }
+
     @Operation(summary = "Получить email текущего пользователя")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/extract-email")
