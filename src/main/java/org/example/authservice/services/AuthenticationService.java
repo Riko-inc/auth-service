@@ -142,6 +142,21 @@ public class AuthenticationService {
                 .build();
     }
 
+    public Boolean checkToken(String token) {
+        if (token == null || token.isBlank()) {
+            throw new AccessDeniedException("Provided token is empty");
+        }
+        try {
+            String tokenType = jwtService.extractTokenType(token);
+            if (StringUtils.isEmpty(tokenType) || tokenType.equals("REFRESH")) {
+                throw new AccessDeniedException("Invalid token type. Expected REFRESH. Found: " + tokenType);
+            }
+            return tokenRepository.getByToken(token).isPresent();
+        } catch (Exception e) {
+            throw new AccessDeniedException("Invalid token, exception happened during check token");
+        }
+    }
+
     public Boolean checkEmailExists(String email) {
         return userService.existsByEmail(email);
     }

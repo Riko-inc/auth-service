@@ -1,5 +1,6 @@
 package org.example.authservice.controllers;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +49,13 @@ public class AuthenticationController {
     @GetMapping("/check-email")
     public ResponseEntity<Boolean> validateEmail(@Valid @RequestHeader("Email") String email) {
         return ResponseEntity.ok(service.checkEmailExists(email));
+    }
+
+    @Operation(summary = "Проверить JWT access токен на валидность")
+    @GetMapping("/check-token")
+    @Hidden
+    public ResponseEntity<Boolean> checkToken(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(service.checkToken(token));
     }
 
     @Operation(summary = "Получить email текущего пользователя")
