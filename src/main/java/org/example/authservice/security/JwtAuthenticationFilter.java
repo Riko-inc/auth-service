@@ -17,6 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import static org.example.authservice.config.WebSecurityConfig.WHITE_LIST_URL;
 
 @Component
 @RequiredArgsConstructor
@@ -33,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain)
                                     throws ServletException, IOException {
         final String authHeader = request.getHeader(HEADER_NAME); // Bearer *token*
-        if (authHeader == null || !StringUtils.startsWith(authHeader, BEARER_PREFIX)) {
+        if (authHeader == null || !StringUtils.startsWith(authHeader, BEARER_PREFIX) || isWhiteListed(request)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -52,5 +55,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isWhiteListed(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return Arrays.stream(WHITE_LIST_URL)
+                .anyMatch(url -> path.matches(url.replace("/**", ".*")));
     }
 }
