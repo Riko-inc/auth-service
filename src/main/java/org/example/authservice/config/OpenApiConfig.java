@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 
 @OpenAPIDefinition (
         servers = {
-                @Server(url = "http://${SERVER_IP:localhost}:${SERVER_HTTP_PORT:server.port}${SWAGGER_PREFIX:}", description = "Server")},
+                @Server(url = "http://${SERVER_IP:localhost}:${SERVER_HTTP_PORT:8083}${SWAGGER_PREFIX:}", description = "Server")},
         info = @Info(
         title = "Authentication module of task management platform",
         description = "Made as research project at TPU", version = "1.0.0",
