@@ -1,0 +1,10 @@
+target/
+.git
+.idea
+*.iml
+.github
+README.md
+*.png
+.mvn
+compose.yaml
+mvnw.cmd
