@@ -3,10 +3,15 @@ name: CI/CD test pipeline
 on:
   pull_request:
     branches:
-      - develop
+      - [ "main", "develop" ]
   push:
     branches:
-      - *
+      - [ "*" ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - '.github/workflows/*.yml'
+      - 'Dockerfile'
 
 jobs:
   test:
