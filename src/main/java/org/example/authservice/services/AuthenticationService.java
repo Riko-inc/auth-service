@@ -157,6 +157,10 @@ public class AuthenticationService {
         }
     }
 
+    public Boolean checkUserId(Long userId) {
+        return userService.existsById(userId);
+    }
+
     public Boolean checkEmailExists(String email) {
         return userService.existsByEmail(email);
     }

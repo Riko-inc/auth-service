@@ -101,4 +101,13 @@ public class UserServiceImpl implements UserService {
         }
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    @Transactional
+    public boolean existsById(Long userId) {
+        if (userId == null) {
+            throw new InvalidRequestParameterException("User id was not provided");
+        }
+        return userRepository.existsById(userId);
+    }
 }

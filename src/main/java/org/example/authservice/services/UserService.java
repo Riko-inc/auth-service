@@ -73,4 +73,6 @@ public interface UserService {
     UserEntity getByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    boolean existsById(Long userId);
 }
