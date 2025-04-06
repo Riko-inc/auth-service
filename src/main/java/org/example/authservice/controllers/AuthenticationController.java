@@ -45,6 +45,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.refreshToken(request));
     }
 
+    // TODO: Добавить проверку токена. Только для авторизованных
     @Operation(summary = "Проверить, что пользователь с заданным email существует")
     @GetMapping("/check-email")
     public ResponseEntity<Boolean> validateEmail(@Valid @RequestHeader("Email") String email) {
@@ -53,9 +54,16 @@ public class AuthenticationController {
 
     @Operation(summary = "Проверить JWT access токен на валидность")
     @GetMapping("/check-token")
-    @Hidden
+    @SecurityRequirement(name = "JWT")
     public ResponseEntity<Boolean> checkToken(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(service.checkToken(token));
+    }
+
+    // TODO: Добавить проверку токена. Только для авторизованных
+    @Operation(summary = "Проверить, существует ли пользователь с заданным id")
+    @GetMapping("/check-id")
+    public ResponseEntity<Boolean> checkUserId(@RequestHeader("Id") Long userId) {
+        return ResponseEntity.ok(service.checkUserId(userId));
     }
 
     @Operation(summary = "Получить email текущего пользователя")

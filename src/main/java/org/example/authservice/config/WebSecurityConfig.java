@@ -33,6 +33,7 @@ public class WebSecurityConfig {
             "/api/v1/auth/authenticate",
             "/api/v1/auth/check-token",
             "/api/v1/auth/check-email",
+            "/api/v1/auth/check-id",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",
