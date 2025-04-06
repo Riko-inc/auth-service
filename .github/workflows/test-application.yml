@@ -2,7 +2,6 @@ name: CI/CD test pipeline
 
 on:
   push:
-    branches: [ "**" ]
     branches-ignore: [ main, develop ]
     paths:
       - 'src/**'
