@@ -49,9 +49,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.refreshToken(request));
     }
 
-    //TODO: Изменить на пользователей текущего пространства
+    //TODO: Изменить на получение пользователей текущего пространства
     @Operation(summary = "Получить список всех пользователей")
-    @PostMapping("/users")
+    @GetMapping("/users")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<List<GetUserResponse>> getAllUsers(@Valid @AuthenticationPrincipal UserEntity user) {
         if (user == null) {
