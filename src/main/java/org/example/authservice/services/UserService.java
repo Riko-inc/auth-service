@@ -1,6 +1,7 @@
 package org.example.authservice.services;
 
 import org.example.authservice.domain.dto.requests.UserUpdateRequest;
+import org.example.authservice.domain.dto.responses.GetUserResponse;
 import org.example.authservice.domain.dto.responses.UserGetCurrentUserResponse;
 import org.example.authservice.domain.dto.responses.UserUpdateResponse;
 import org.example.authservice.domain.entities.UserEntity;
@@ -15,7 +16,7 @@ public interface UserService {
      *
      * @return список {@link UserEntity}, сохранённый в базе данных
      */
-    List<UserEntity> getAll();
+    List<GetUserResponse> getAllUsers();
 
 
     /**

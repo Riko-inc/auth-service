@@ -2,12 +2,14 @@ package org.example.authservice.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.authservice.domain.dto.requests.UserUpdateRequest;
+import org.example.authservice.domain.dto.responses.GetUserResponse;
 import org.example.authservice.domain.dto.responses.UserGetCurrentUserResponse;
 import org.example.authservice.domain.dto.responses.UserUpdateResponse;
 import org.example.authservice.domain.entities.UserEntity;
 import org.example.authservice.exceptions.AccessDeniedException;
 import org.example.authservice.exceptions.EntityNotFoundException;
 import org.example.authservice.exceptions.InvalidRequestParameterException;
+import org.example.authservice.mappers.Mapper;
 import org.example.authservice.repositories.UserRepository;
 import org.example.authservice.services.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Mapper<UserEntity, GetUserResponse> getUserResponseMapper;
 
     @Override
     @Transactional
@@ -37,8 +40,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<UserEntity> getAll() {
-        return userRepository.findAll();
+    public List<GetUserResponse> getAllUsers() {
+        return userRepository.findAll().stream().map(getUserResponseMapper::mapToDto).toList();
     }
 
     @Override
