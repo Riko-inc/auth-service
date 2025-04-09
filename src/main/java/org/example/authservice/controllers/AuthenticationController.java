@@ -49,22 +49,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.refreshToken(request));
     }
 
-    //TODO: Изменить на получение пользователей текущего пространства
-    @Operation(summary = "Получить список всех пользователей")
-    @GetMapping("/users")
+    @Operation(summary = "Получить UserDetails из токена пользователя")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<List<GetUserResponse>> getAllUsers(@Valid @AuthenticationPrincipal UserEntity user) {
-        if (user == null) {
-            throw new AccessDeniedException("Пользователь не зарегистрирован");
-        }
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    // TODO: Добавить проверку токена. Только для авторизованных
-    @Operation(summary = "Проверить, что пользователь с заданным email существует")
-    @GetMapping("/check-email")
-    public ResponseEntity<Boolean> validateEmail(@Valid @RequestHeader("Email") String email) {
-        return ResponseEntity.ok(authenticationService.checkEmailExists(email));
+    @GetMapping("/details")
+    public ResponseEntity<UserDetailResponse> getUserDetails(@Valid @AuthenticationPrincipal UserEntity user) {
+        return ResponseEntity.ok(authenticationService.getUserDetails(user));
     }
 
     @Operation(summary = "Проверить JWT access токен на валидность")
@@ -74,9 +63,27 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.checkToken(token));
     }
 
+    //TODO: Изменить на получение пользователей текущего пространства
+    @Operation(summary = "Получить список всех пользователей")
+    @GetMapping("/users")
+    @SecurityRequirement(name = "JWT")
+    @Deprecated
+    public ResponseEntity<List<GetUserResponse>> getAllUsers()  {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    // TODO: Добавить проверку токена. Только для авторизованных
+    @Operation(summary = "Проверить, что пользователь с заданным email существует")
+    @GetMapping("/check-email")
+    @Deprecated
+    public ResponseEntity<Boolean> validateEmail(@Valid @RequestHeader("Email") String email) {
+        return ResponseEntity.ok(authenticationService.checkEmailExists(email));
+    }
+
     // TODO: Добавить проверку токена. Только для авторизованных
     @Operation(summary = "Проверить, существует ли пользователь с заданным id")
     @GetMapping("/check-id")
+    @Deprecated
     public ResponseEntity<Boolean> checkUserId(@RequestHeader("Id") Long userId) {
         return ResponseEntity.ok(authenticationService.checkUserId(userId));
     }
@@ -84,6 +91,7 @@ public class AuthenticationController {
     @Operation(summary = "Получить email текущего пользователя")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/extract-email")
+    @Deprecated
     public ResponseEntity<String> extractEmail(@Valid @AuthenticationPrincipal UserEntity user) {
         return ResponseEntity.ok(authenticationService.extractEmail(user));
     }
@@ -91,14 +99,8 @@ public class AuthenticationController {
     @Operation(summary = "Получить роль текущего пользователя")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/role")
+    @Deprecated
     public ResponseEntity<String> getRole(@Valid @AuthenticationPrincipal UserEntity user) {
         return ResponseEntity.ok(authenticationService.extractRole(user));
-    }
-
-    @Operation(summary = "Получить UserDetails из токена пользователя")
-    @SecurityRequirement(name = "JWT")
-    @GetMapping("/details")
-    public ResponseEntity<UserDetailResponse> getUserDetails(@Valid @AuthenticationPrincipal UserEntity user) {
-        return ResponseEntity.ok(authenticationService.getUserDetails(user));
     }
 }
