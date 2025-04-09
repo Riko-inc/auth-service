@@ -22,6 +22,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static org.example.authservice.security.JwtAuthenticationFilter.BEARER_PREFIX;
+
 /**
  * Contains logic for getting JWT tokens
  */
@@ -142,16 +144,17 @@ public class AuthenticationService {
                 .build();
     }
 
-    public Boolean checkToken(String token) {
-        if (token == null || token.isBlank()) {
-            throw new AccessDeniedException("Provided token is empty");
+    public Boolean checkToken(String tokenHeader) {
+        if (tokenHeader == null || !StringUtils.startsWith(tokenHeader, BEARER_PREFIX)) {
+            throw new AccessDeniedException("Provided token is empty or does not have prefix " + BEARER_PREFIX);
         }
         try {
-            String tokenType = jwtService.extractTokenType(token);
+            String jwtToken = tokenHeader.substring(BEARER_PREFIX.length());
+            String tokenType = jwtService.extractTokenType(jwtToken);
             if (StringUtils.isEmpty(tokenType) || tokenType.equals("REFRESH")) {
                 throw new AccessDeniedException("Invalid token type. Expected REFRESH. Found: " + tokenType);
             }
-            return tokenRepository.getByToken(token).isPresent();
+            return tokenRepository.getByToken(jwtToken).isPresent();
         } catch (Exception e) {
             throw new AccessDeniedException("Invalid token, exception happened during check token");
         }
