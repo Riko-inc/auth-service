@@ -7,20 +7,15 @@ import lombok.RequiredArgsConstructor;
 import org.example.authservice.domain.dto.requests.UserRefreshTokenRequest;
 import org.example.authservice.domain.dto.requests.UserSignInRequest;
 import org.example.authservice.domain.dto.requests.UserSignUpRequest;
-import org.example.authservice.domain.dto.responses.GetUserResponse;
 import org.example.authservice.domain.dto.responses.UserDetailResponse;
 import org.example.authservice.domain.dto.responses.UserJwtAuthenticationResponse;
 import org.example.authservice.domain.entities.UserEntity;
-import org.example.authservice.exceptions.AccessDeniedException;
 import org.example.authservice.services.AuthenticationService;
-import org.example.authservice.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -29,7 +24,6 @@ import java.util.List;
 @Tag(name = "Авторизация и аутентификация")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
-    private final UserService userService;
 
     @Operation(summary = "Зарегистрировать пользователя и получить JWT токены")
     @PostMapping("/register")
@@ -61,46 +55,5 @@ public class AuthenticationController {
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<Boolean> checkToken(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(authenticationService.checkToken(token));
-    }
-
-    //TODO: Изменить на получение пользователей текущего пространства
-    @Operation(summary = "Получить список всех пользователей")
-    @GetMapping("/users")
-    @SecurityRequirement(name = "JWT")
-    @Deprecated
-    public ResponseEntity<List<GetUserResponse>> getAllUsers()  {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    // TODO: Добавить проверку токена. Только для авторизованных
-    @Operation(summary = "Проверить, что пользователь с заданным email существует")
-    @GetMapping("/check-email")
-    @Deprecated
-    public ResponseEntity<Boolean> validateEmail(@Valid @RequestHeader("Email") String email) {
-        return ResponseEntity.ok(authenticationService.checkEmailExists(email));
-    }
-
-    // TODO: Добавить проверку токена. Только для авторизованных
-    @Operation(summary = "Проверить, существует ли пользователь с заданным id")
-    @GetMapping("/check-id")
-    @Deprecated
-    public ResponseEntity<Boolean> checkUserId(@RequestHeader("Id") Long userId) {
-        return ResponseEntity.ok(authenticationService.checkUserId(userId));
-    }
-
-    @Operation(summary = "Получить email текущего пользователя")
-    @SecurityRequirement(name = "JWT")
-    @GetMapping("/extract-email")
-    @Deprecated
-    public ResponseEntity<String> extractEmail(@Valid @AuthenticationPrincipal UserEntity user) {
-        return ResponseEntity.ok(authenticationService.extractEmail(user));
-    }
-
-    @Operation(summary = "Получить роль текущего пользователя")
-    @SecurityRequirement(name = "JWT")
-    @GetMapping("/role")
-    @Deprecated
-    public ResponseEntity<String> getRole(@Valid @AuthenticationPrincipal UserEntity user) {
-        return ResponseEntity.ok(authenticationService.extractRole(user));
     }
 }
