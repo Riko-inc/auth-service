@@ -50,7 +50,7 @@ public class ApplicationConfig {
     public FilterRegistrationBean<RequestLogFilter> requestLoggingFilter() {
         FilterRegistrationBean<RequestLogFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new RequestLogFilter());
-        registration.addUrlPatterns("/*");
+        registration.addUrlPatterns("/api/*");
         registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return registration;
     }
