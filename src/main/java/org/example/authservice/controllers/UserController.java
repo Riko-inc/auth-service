@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.authservice.domain.dto.responses.GetUserResponse;
 import org.example.authservice.domain.entities.UserEntity;
-import org.example.authservice.exceptions.AccessDeniedException;
 import org.example.authservice.services.AuthenticationService;
 import org.example.authservice.services.UserService;
 import org.springframework.http.ResponseEntity;

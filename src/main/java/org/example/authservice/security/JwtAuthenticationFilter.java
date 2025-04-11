@@ -39,11 +39,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
                                     throws ServletException, IOException {
+        if (isWhiteListed(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             final String authHeader = request.getHeader(HEADER_NAME); // Bearer *token*
-            if (authHeader == null || !StringUtils.startsWith(authHeader, BEARER_PREFIX) || isWhiteListed(request)) {
-                filterChain.doFilter(request, response);
-                return;
+
+            if (authHeader == null || !StringUtils.startsWith(authHeader, BEARER_PREFIX)) {
+                throw new AccessDeniedException("Auth header was not provided or has wrong prefix");
             }
 
             String jwtToken = authHeader.substring(BEARER_PREFIX.length()); // Only *token* part, without Bearer prefix
