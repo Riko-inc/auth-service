@@ -30,12 +30,10 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: "image.tar"
+          source: "/github/workspace/image.tar"
           target: "/tmp/"
           strip_components: 0
-          rm: true
           debug: true
-          overwrite: true
 
       - name: Deploy on server via SSH
         uses: appleboy/ssh-action@master
