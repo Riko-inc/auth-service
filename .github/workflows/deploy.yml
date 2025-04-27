@@ -24,7 +24,7 @@ jobs:
         run: chmod 644 $GITHUB_WORKSPACE/image.tar
 
       - name: Transfer image to server via SCP
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SSH_USER }}
