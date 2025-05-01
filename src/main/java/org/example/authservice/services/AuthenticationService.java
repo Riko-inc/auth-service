@@ -42,7 +42,6 @@ public class AuthenticationService {
 
 
     // TODO: remove
-
     @EventListener(ApplicationReadyEvent.class)
     public void adminCreator() {
         userService.deleteByEmail("a@admin.com");
