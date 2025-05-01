@@ -6,12 +6,14 @@ import org.example.authservice.domain.dto.responses.GetUserResponse;
 import org.example.authservice.domain.dto.responses.UserGetCurrentUserResponse;
 import org.example.authservice.domain.dto.responses.UserUpdateResponse;
 import org.example.authservice.domain.entities.UserEntity;
+import org.example.authservice.domain.events.EventType;
 import org.example.authservice.exceptions.AccessDeniedException;
 import org.example.authservice.exceptions.EntityNotFoundException;
 import org.example.authservice.exceptions.InvalidRequestParameterException;
 import org.example.authservice.mappers.Mapper;
 import org.example.authservice.repositories.UserRepository;
 import org.example.authservice.services.UserService;
+import org.example.authservice.utils.PublishStringEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @PublishStringEvent(eventType = EventType.USER_CREATED, topic = "user-events", payloadExpression = "#result.getUserId().toString()")
     public UserEntity create(UserEntity userEntity) {
         if (userRepository.existsByEmail(userEntity.getEmail())) {
             throw new UserAlreadyExistException("User with " + userEntity.getEmail() + " email already exists");
