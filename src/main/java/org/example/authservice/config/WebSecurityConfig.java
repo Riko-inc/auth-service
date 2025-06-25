@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.authservice.domain.dto.responses.ErrorResponse;
-import org.example.authservice.exceptions.AccessDeniedException;
-import org.example.authservice.exceptions.EntityNotFoundException;
 import org.example.authservice.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

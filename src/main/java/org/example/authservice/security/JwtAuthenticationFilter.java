@@ -61,7 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .orElseThrow(() -> new AccessDeniedException("Token has expired or invalid"));
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));
+            SecurityContextHolder.getContext()
+                    .setAuthentication(new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()));
 
             filterChain.doFilter(request, response);
         } catch (AccessDeniedException ex) {

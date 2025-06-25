@@ -13,6 +13,7 @@ import org.example.authservice.exceptions.InvalidRequestParameterException;
 import org.example.authservice.mappers.Mapper;
 import org.example.authservice.repositories.UserRepository;
 import org.example.authservice.services.UserService;
+import org.example.authservice.utils.PublishDtoEvent;
 import org.example.authservice.utils.PublishStringEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @PublishDtoEvent(eventType = EventType.USER_UPDATED, topic = "user-events", payloadClass = UserUpdateResponse.class)
     public UserUpdateResponse update(long userId, UserUpdateRequest userUpdateRequest) {
         return userRepository.findById(userId).map(existingUserEntity -> {
             Optional.ofNullable(userUpdateRequest.getEmail()).ifPresent(existingUserEntity::setEmail);

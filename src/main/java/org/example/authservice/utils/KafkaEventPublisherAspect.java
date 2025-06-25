@@ -3,7 +3,6 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.example.authservice.domain.events.EventType;
 import org.example.authservice.domain.events.GenericEventMessage;
 import org.example.authservice.domain.events.StringEvent;
 import org.modelmapper.ModelMapper;
@@ -33,7 +32,7 @@ public class KafkaEventPublisherAspect {
         kafkaTemplate.send(
                 publishDtoEvent.topic(),
                 new GenericEventMessage<>(
-                        EventType.valueOf(publishDtoEvent.eventType()),
+                        publishDtoEvent.eventType(),
                         payload
                 )
         );
